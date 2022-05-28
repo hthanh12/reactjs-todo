@@ -5,6 +5,9 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useCallback, useState } from "react";
 import { v4 } from 'uuid';
+import moment from "moment";
+
+
 function App() {
   const [todoList, setTodoList] = useState([])
   const [textInput, setTextInput] = useState("")
@@ -14,22 +17,25 @@ function App() {
   }, [])
 
   const onAddBtnClick = useCallback((e) => {
-    // 1
-    // setTodoList([{ name: "Item 1" }])
-    // 2 
-    // setTodoList((prevState) => [])
-
-    setTodoList([...todoList, { id: v4(), name: textInput, isCompleted: false }])
+    setTodoList([...todoList, { id: v4(), name: textInput, isCompleted: false, createdAt: moment() }])
     setTextInput("")
   }, [textInput, todoList])
 
   const onCheckBtnClick = useCallback((id) => {
     setTodoList(prevState => prevState.map(todo => todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo))
   }, [])
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      onAddBtnClick()
+    }
+  }
+
   return (
     <>
       <h3>List todo</h3>
-      <Box
+      <Box onKeyDown={handleKeyDown}
         fullWidth={true}
         component="form"
         sx={{
